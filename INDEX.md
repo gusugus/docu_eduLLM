@@ -26,38 +26,39 @@ Bienvenido al índice de navegación de la documentación de **eduLLM**. Utiliza
 
 ---
 
-Proyectos: 
-    * RAG: https://github.com/gusugus/eduLLM-RAG
+## Proyectos: 
     
-        - Documentacion: https://raw.githubusercontent.com/gusugus/eduLLM-RAG/refs/heads/master/DOCUMENTACION.md
+* **RAG:** 
+    * [eduLLM-RAG](https://github.com/gusugus/eduLLM-RAG)
     
-    * Middleware: https://github.com/gusugus/proxyLLM#-flujos-principales
+    * [Documentacion](https://raw.githubusercontent.com/gusugus/eduLLM-RAG/refs/heads/master/DOCUMENTACION.md)
     
-    * Auth: https://github.com/gusugus/eduLLM-Auth
-    
-        -Documentacion: https://github.com/gusugus/eduLLM-Auth/blob/master/DOCUMENTACION.md
-    
-    * Gateway: https://github.com/gusugus/eduLLM-Gateway
-    
-        - Documentacion
-    
-    * Game: https://github.com/gusugus/eduLLM
-    
-        - Documentacion: https://github.com/gusugus/eduLLM/blob/main/docs/INDEX.md
-    
-    * Gateway: https://github.com/gusugus/eduLLM-Gateway
-        
-        - Documentacion: https://github.com/gusugus/eduLLM-Gateway/blob/master/docs/INDEX.md
-    
-    * Profesor Back: En desarrollo
-    
-    * Profesor front: En desarrrollo
-    
-    * Administrador back: en desarrollo
-    
-    * Administrador front: en desarrollo
-    
+* **Middleware:** 
+    * [url](https://github.com/gusugus/proxyLLM#-flujos-principales)
 
+* **Auth:** 
+    * [url](https://github.com/gusugus/eduLLM-Auth)
+    * [Documentacion](https://github.com/gusugus/eduLLM-Auth/blob/master/DOCUMENTACION.md)
+
+* **Gateway:** 
+    * [url](https://github.com/gusugus/eduLLM-Gateway)
+    * [Documentacion](https://github.com/gusugus/eduLLM-Gateway/blob/master/docs/INDEX.md)
+
+* **Game:** 
+    * [url](https://github.com/gusugus/eduLLM)
+    * [Documentacion](https://github.com/gusugus/eduLLM/blob/main/docs/INDEX.md)
+
+* **Profesor Back**:
+    * En desarrollo
+
+* **Profesor front**:
+    * En desarrollo
+
+* **Administrador back**:
+    * En desarrollo
+
+* **Administrador front**:
+    * En desarrollo
 
 ## 🧭 Instrucciones de Navegación
 
