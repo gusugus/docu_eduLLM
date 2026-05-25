@@ -26,6 +26,25 @@ Bienvenido al índice de navegación de la documentación de **eduLLM**. Utiliza
 
 ---
 
+Proyectos: 
+    * RAG: https://github.com/gusugus/eduLLM-RAG
+        - Documentacion: https://raw.githubusercontent.com/gusugus/eduLLM-RAG/refs/heads/master/DOCUMENTACION.md
+    * Middleware: https://github.com/gusugus/proxyLLM#-flujos-principales
+    * Auth: https://github.com/gusugus/eduLLM-Auth
+        -Documentacion: https://github.com/gusugus/eduLLM-Auth/blob/master/DOCUMENTACION.md
+    * Gateway: https://github.com/gusugus/eduLLM-Gateway
+        - Documentacion
+    * Game: https://github.com/gusugus/eduLLM
+        - Documentacion: https://github.com/gusugus/eduLLM/blob/main/docs/INDEX.md
+    * Gateway: https://github.com/gusugus/eduLLM-Gateway
+        - Documentacion: https://github.com/gusugus/eduLLM-Gateway/blob/master/docs/INDEX.md
+    * Profesor Back: En desarrollo
+    * Profesor front: En desarrrollo
+    * Administrador back: en desarrollo
+    * Administrador front: en desarrollo
+    
+
+
 ## 🧭 Instrucciones de Navegación
 
 *   **Para volver aquí**: Cada uno de los archivos markdown anteriores tiene enlaces de retorno o puedes pulsar "Atrás" en tu lector de Markdown.
