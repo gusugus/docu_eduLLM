@@ -1,3 +1,6 @@
+# Modelo Entidad-Relación eduLLM
+
+```mermaid
 erDiagram
     usuario {
         int id_usuario PK
@@ -225,3 +228,5 @@ erDiagram
     admi_parametro ||--|| estado : "tiene"
     documento }o--|| usuario : "pertenece"
     documento ||--|| estado : "tiene"
+
+```
