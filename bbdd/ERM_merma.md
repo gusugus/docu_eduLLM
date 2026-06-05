@@ -40,6 +40,7 @@ erDiagram
         int id_profesor PK
         int id_usuario FK
         int id_estado FK
+        string especialidad
     }
     
     estudiante {
