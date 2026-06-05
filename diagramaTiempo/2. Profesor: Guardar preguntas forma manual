@@ -1,0 +1,17 @@
+@startuml
+title Profesor: Guardar preguntas forma manual
+
+actor Profesor as prof
+participant "Frontend MS PROFESOR" as frontprof
+participant "Gateway" as gw
+participant "Backend MS PROFESOR" as backprof
+
+prof -> frontprof: Edita/confirma preguntas en su panel
+frontprof -> gw: POST /profesor/questions/save (array de preguntas) [JWT]
+gw -> gw: Valida token y rol profesor
+gw -> backprof: Reenvía petición + headers (user_id, rol)
+backprof -> backprof: Valida y almacena preguntas (en su propia BD)
+backprof --> gw: Confirmación (ids generados)
+gw --> frontprof: "Preguntas guardadas"
+frontprof --> prof: Mensaje de éxito
+@enduml

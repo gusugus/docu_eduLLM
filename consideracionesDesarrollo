@@ -1,0 +1,16 @@
+# Consideraciones Desarrollador
+Se debe tener el back y el front separados
+Se deber usar principios, como el SOLID, con el fin de poder darle mantenimiento futuro a la aplicacion
+Se debe tener los sitios web responsive.
+Tanto el front como el back, se debe hacer uso de REUTILIZACION. Para el front se reutilizaria componentes, y para el back se reutilizaria funciones.
+Se deben usar frameworks o librerias (no inventar la rueda...)
+Se debe trabajar separacion por capas (minimo MVC pero se le podria poner mas capas)
+Se va a trabajar con react, para el front, express para el back.
+Se debe separar responsabilidades.
+Debe ser responsive.
+Se va a manejar los aplicativos como Microservicios, para poderlos llevar a contenedores docker, con el fin de que funcionen en todos los dispositivos que se requiera subir ambiente.
+
+Usemos ORM (parte del principio de reutilizacion).
+Utilizacion de logs cada que haya un punto importante (alguna interaccion de insercion en la base, cuando se presione un boton, cuadno se renderize un elemento, cuando se extraiga datos de la base, etc.)
+
+Para el front usemos layout general (para cada feature/rol)

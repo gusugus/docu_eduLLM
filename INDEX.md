@@ -33,8 +33,10 @@ Bienvenido al índice de navegación de la documentación de **eduLLM**. Utiliza
     
     * [Documentacion](https://raw.githubusercontent.com/gusugus/eduLLM-RAG/refs/heads/master/DOCUMENTACION.md)
     
-* **Middleware:** 
-    * [url](https://github.com/gusugus/proxyLLM#-flujos-principales)
+* **Prompt Engineering:** 
+    * [url](https://github.com/gusugus/eduLLM-Prompting)
+
+     [Documentacion Arquitectura](https://raw.githubusercontent.com/gusugus/eduLLM-Prompting/refs/heads/master/docs/architecture.md)
 
 * **Auth:** 
     * [url](https://github.com/gusugus/eduLLM-Auth)
@@ -52,10 +54,15 @@ Bienvenido al índice de navegación de la documentación de **eduLLM**. Utiliza
     * En desarrollo
 
 * **Profesor front**:
-    * En desarrollo
+    * [url](https://github.com/gusugus/eduLLM-Admin-Front)
+    * [Documentacion](https://raw.githubusercontent.com/gusugus/eduLLM-Admin-Front/refs/heads/master/docs/DOCUMENTACION.md)
+
 
 * **Administrador back**:
-    * En desarrollo
+    * [url](https://github.com/gusugus/eduLLM-Admin-Back)
+    * [Documentacion](https://raw.githubusercontent.com/gusugus/eduLLM-Admin-Back/refs/heads/master/docs/DOCUMENTACION.md)
+
+    
 
 * **Administrador front**:
     * En desarrollo

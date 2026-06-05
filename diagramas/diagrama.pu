@@ -1,0 +1,6 @@
+@startuml
+skinparam monochrome true
+VSCode -> LaTeX3: Compila el archivo
+LaTeX3 --> VSCode: Genera el PDF
+note right of VSCode: Esto es un diagrama\nincrustado directamente.
+@enduml
