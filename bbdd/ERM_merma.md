@@ -167,11 +167,6 @@ erDiagram
         int id_estado FK
     }
     
-    sessions {
-        string sid PK
-        json sess
-        timestamp expire
-    }
 
     %% Relaciones
     usuario ||--|| rol : "tiene"
