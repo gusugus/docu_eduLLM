@@ -1,181 +1,167 @@
+```mermaid
 erDiagram
     usuario {
-        integer id_usuario PK
-        varchar username UK
-        varchar password_hash
-        integer id_rol FK
-        integer id_estado FK
-        varchar primer_nombre
-        varchar apellido_paterno
-        varchar apellido_materno
-        varchar correo
-        varchar reset_token
+        int id_usuario PK
+        string username UK
+        string password_hash
+        int id_rol FK
+        int id_estado FK
+        string primer_nombre
+        string apellido_paterno
+        string apellido_materno
+        string correo
+        string reset_token
         timestamp reset_token_expiry
     }
-
     rol {
-        integer id_rol PK
-        varchar nombre UK
-        integer id_estado FK
+        int id_rol PK
+        string nombre UK
+        int id_estado FK
     }
-
     estado {
-        integer id_estado PK
-        varchar codigo UK
-        varchar nombre
+        int id_estado PK
+        string codigo UK
+        string nombre
     }
-
     administrador {
-        integer id_administrador PK
-        integer id_usuario FK
-        integer nivel_acceso
-        integer id_estado FK
+        int id_administrador PK
+        int id_usuario FK
+        int nivel_acceso
+        int id_estado FK
     }
-
     profesor {
-        integer id_profesor PK
-        integer id_usuario FK
-        varchar especialidad
-        integer id_estado FK
+        int id_profesor PK
+        int id_usuario FK
+        string especialidad
+        int id_estado FK
     }
-
     estudiante {
-        integer id_estudiante PK
-        integer id_usuario FK
-        integer id_grado FK
-        integer id_estado FK
+        int id_estudiante PK
+        int id_usuario FK
+        int id_grado FK
+        int id_estado FK
     }
-
     grado {
-        integer id_grado PK
-        integer grado
-        varchar paralelo
-        integer id_estado FK
+        int id_grado PK
+        int grado
+        string paralelo
+        int id_estado FK
     }
-
     materia {
-        integer id_materia PK
-        varchar nombre
-        text descripcion
-        integer id_grado FK
-        integer id_estado FK
-        text nombre_normalizado
+        int id_materia PK
+        string nombre
+        string descripcion
+        int id_grado FK
+        int id_estado FK
+        string nombre_normalizado
     }
-
     periodo_lectivo {
-        integer id_periodo_lectivo PK
-        varchar nombre
+        int id_periodo_lectivo PK
+        string nombre
         date fecha_inicio
         date fecha_fin
         boolean es_activo
-        integer id_estado FK
+        int id_estado FK
     }
-
     profesor_materia {
-        integer id_profesor_materia PK
-        integer id_profesor FK
-        integer id_materia FK
-        integer id_periodo_lectivo FK
-        integer id_estado FK
+        int id_profesor_materia PK
+        int id_profesor FK
+        int id_materia FK
+        int id_periodo_lectivo FK
+        int id_estado FK
     }
-
     estudiante_materia {
-        integer id_estudiante_materia PK
-        integer id_estudiante FK
-        integer id_materia FK
-        integer id_periodo_lectivo FK
-        integer id_estado FK
+        int id_estudiante_materia PK
+        int id_estudiante FK
+        int id_materia FK
+        int id_periodo_lectivo FK
+        int id_estado FK
         timestamp fecha_inscripcion
         timestamp fecha_retiro
     }
-
     prueba {
-        integer id_prueba PK
-        varchar titulo
-        text descripcion
-        integer id_profesor FK
-        integer id_materia FK
-        jsonb configuracion
-        integer id_estado FK
+        int id_prueba PK
+        string titulo
+        string descripcion
+        int id_profesor FK
+        int id_materia FK
+        json configuracion
+        int id_estado FK
     }
-
     partida {
-        integer id_partida PK
-        integer id_prueba FK
-        integer id_profesor FK
-        varchar codigo_acceso UK
-        varchar estado_partida
+        int id_partida PK
+        int id_prueba FK
+        int id_profesor FK
+        string codigo_acceso UK
+        string estado_partida
         timestamp iniciado_en
         timestamp finalizado_en
-        integer id_estado FK
+        int id_estado FK
     }
-
     partida_estudiante {
-        integer id_partida_estudiante PK
-        integer id_partida FK
-        integer id_estudiante FK
-        varchar nickname_opcional
-        integer puntaje_total
-        integer respuestas_correctas
-        integer id_estado FK
+        int id_partida_estudiante PK
+        int id_partida FK
+        int id_estudiante FK
+        string nickname_opcional
+        int puntaje_total
+        int respuestas_correctas
+        int id_estado FK
     }
-
     pregunta {
-        integer id_pregunta PK
-        integer id_prueba FK
-        text texto
-        varchar tipo
-        integer cooldown
-        integer tiempo_limite
-        integer id_estado FK
-        text image_url
-        text audio_url
-        text video_url
+        int id_pregunta PK
+        int id_prueba FK
+        string texto
+        string tipo
+        int cooldown
+        int tiempo_limite
+        int id_estado FK
+        string image_url
+        string audio_url
+        string video_url
     }
-
     opcion {
-        integer id_opcion PK
-        integer id_pregunta FK
-        text texto
-        integer orden
+        int id_opcion PK
+        int id_pregunta FK
+        string texto
+        int orden
         boolean es_correcta
-        integer id_estado FK
+        int id_estado FK
     }
-
     respuesta {
-        integer id_respuesta PK
-        integer id_partida_estudiante FK
-        integer id_pregunta FK
-        integer id_opcion_seleccionada FK
-        integer tiempo_ms
-        integer puntaje_obtenido
+        int id_respuesta PK
+        int id_partida_estudiante FK
+        int id_pregunta FK
+        int id_opcion_seleccionada FK
+        int tiempo_ms
+        int puntaje_obtenido
     }
-
     retroalimentacion_llm {
-        integer id_retroalimentacion PK
-        integer id_partida_estudiante FK
-        jsonb preguntas_falladas
-        text prompt_enviado
-        text respuesta_llm
-        varchar modelo_usado
+        int id_retroalimentacion PK
+        int id_partida_estudiante FK
+        json preguntas_falladas
+        string prompt_enviado
+        string respuesta_llm
+        string modelo_usado
     }
-
     admi_parametro {
-        integer id_parametro PK
-        varchar clave UK
-        text valor
-        varchar tipo
-        text descripcion
-        integer id_estado FK
+        int id_parametro PK
+        string clave UK
+        string valor
+        string tipo
+        string descripcion
+        int id_estado FK
     }
-
     documento {
-        integer id_documento PK
-        text ruta
-        integer id_usuario FK
-        integer id_estado FK
+        int id_documento PK
+        string ruta
+        int id_usuario FK
+        int id_estado FK
     }
-
+    sessions {
+        string sid PK
+        json sess
+        timestamp expire
+    }
 
     usuario ||--o{ administrador : "es"
     usuario ||--o{ profesor : "es"
@@ -222,3 +208,4 @@ erDiagram
     partida ||--o{ partida_estudiante : "participantes"
     partida_estudiante ||--o{ respuesta : "envía"
     partida_estudiante ||--|| retroalimentacion_llm : "recibe"
+```
