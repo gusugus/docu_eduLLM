@@ -38,7 +38,6 @@ erDiagram
     estudiante {
         int id_estudiante PK
         int id_usuario FK
-        int id_grado FK
         int id_estado FK
     }
     grado {
@@ -83,8 +82,7 @@ erDiagram
         int id_prueba PK
         string titulo
         string descripcion
-        int id_profesor FK
-        int id_materia FK
+        int id_profesor_materia FK
         json configuracion
         int id_estado FK
     }
@@ -101,7 +99,7 @@ erDiagram
     partida_estudiante {
         int id_partida_estudiante PK
         int id_partida FK
-        int id_estudiante FK
+        int id_estudiante_materia FK
         string nickname_opcional
         int puntaje_total
         int respuestas_correctas
@@ -157,11 +155,6 @@ erDiagram
         int id_usuario FK
         int id_estado FK
     }
-    sessions {
-        string sid PK
-        json sess
-        timestamp expire
-    }
 
     usuario ||--o{ administrador : "es"
     usuario ||--o{ profesor : "es"
@@ -170,7 +163,7 @@ erDiagram
     usuario }o--|| rol : "tiene"
     usuario }o--|| estado : "estado"
 
-    estado ||--o{ admi_parametro : "estado"
+    estado ||--o{ admi_parametro : "configura"
     estado ||--o{ materia : "estado"
     estado ||--o{ prueba : "estado"
     estado ||--o{ partida : "estado"
@@ -184,22 +177,19 @@ erDiagram
     estado ||--o{ profesor : "estado"
     estado ||--o{ estudiante : "estado"
 
-    profesor ||--o{ prueba : "crea"
-    profesor ||--o{ partida : "genera"
     profesor ||--o{ profesor_materia : "asigna"
+    profesor ||--o{ partida : "genera"
 
     materia ||--o{ profesor_materia : "tiene"
     materia ||--o{ estudiante_materia : "inscribe"
-    materia ||--o{ prueba : "asociada"
     materia }o--|| grado : "pertenece"
-
-    grado ||--o{ estudiante : "tiene"
-    grado ||--o{ materia : "ofrece"
 
     periodo_lectivo ||--o{ profesor_materia : "vigencia"
     periodo_lectivo ||--o{ estudiante_materia : "vigencia"
 
-    prueba ||--o{ partida : "se juega"
+    profesor_materia ||--o{ prueba : "crea"
+
+    prueba ||--o{ partida : "se_juega"
     prueba ||--o{ pregunta : "contiene"
 
     pregunta ||--o{ opcion : "tiene"
@@ -208,4 +198,6 @@ erDiagram
     partida ||--o{ partida_estudiante : "participantes"
     partida_estudiante ||--o{ respuesta : "envía"
     partida_estudiante ||--|| retroalimentacion_llm : "recibe"
+
+    estudiante ||--o{ estudiante_materia : "se_inscribe"
 ```
