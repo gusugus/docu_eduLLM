@@ -4,6 +4,215 @@ CREATE SCHEMA comun;
 
 ALTER SCHEMA comun OWNER TO admin;
 
+--
+-- Name: fn_login(character varying); Type: FUNCTION; Schema: comun; Owner: admin
+--
+
+CREATE FUNCTION comun.fn_login(pv_username character varying) RETURNS TABLE(id_usuario integer, password_hash character varying, id_rol integer, primer_nombre character varying, apellido_paterno character varying, apellido_materno character varying, nombre_rol character varying)
+    LANGUAGE plpgsql STABLE
+    AS $$
+BEGIN
+    RETURN QUERY
+    SELECT u.id_usuario, u.password_hash, u.id_rol,
+           u.primer_nombre, u.apellido_paterno, u.apellido_materno, r.nombre nombre_rol
+    FROM comun.usuario u
+        JOIN comun.rol r ON r.id_rol = u.id_rol
+    WHERE u.username = pv_username
+      AND u.id_estado = comun.obtener_id_estado_activo();
+END;
+$$;
+
+
+ALTER FUNCTION comun.fn_login(pv_username character varying) OWNER TO admin;
+
+--
+-- Name: normalizar_texto(text); Type: FUNCTION; Schema: comun; Owner: admin
+--
+
+CREATE FUNCTION comun.normalizar_texto(texto text) RETURNS text
+    LANGUAGE plpgsql IMMUTABLE
+    AS $$
+BEGIN
+    RETURN lower(trim(regexp_replace(texto, '\s+', ' ', 'g')));
+END;
+$$;
+
+
+ALTER FUNCTION comun.normalizar_texto(texto text) OWNER TO admin;
+
+--
+-- Name: obtener_id_estado_activo(); Type: FUNCTION; Schema: comun; Owner: admin
+--
+
+CREATE FUNCTION comun.obtener_id_estado_activo() RETURNS integer
+    LANGUAGE sql IMMUTABLE
+    AS $$
+    SELECT id_estado FROM comun.estado WHERE codigo = 'ACT';
+$$;
+
+
+ALTER FUNCTION comun.obtener_id_estado_activo() OWNER TO admin;
+
+--
+-- Name: parametro_guardar(character varying, text, character varying, text, integer); Type: PROCEDURE; Schema: comun; Owner: admin
+--
+
+CREATE PROCEDURE comun.parametro_guardar(IN pv_clave character varying, IN pv_valor text, IN pv_tipo character varying, IN pv_descripcion text, IN pn_usuario_creacion integer, OUT pn_id_parametro integer, OUT pv_error text)
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+    Ln_id_estado_activo INT;
+    Ln_existente_id INT;
+BEGIN
+    Ln_id_estado_activo := comun.obtener_id_estado_activo();
+
+    -- Verificar si ya existe un parámetro activo con esa clave
+    SELECT id_parametro INTO Ln_existente_id
+    FROM comun.admi_parametro
+    WHERE clave = Pv_clave
+      AND id_estado = Ln_id_estado_activo
+    LIMIT 1;
+
+    IF Ln_existente_id IS NOT NULL THEN
+        -- Actualizar existente
+        UPDATE comun.admi_parametro
+        SET valor = Pv_valor,
+            tipo = COALESCE(Pv_tipo, tipo),
+            descripcion = COALESCE(Pv_descripcion, descripcion),
+            fecha_modificacion = NOW(),
+            usuario_modificacion = Pn_usuario_creacion
+        WHERE id_parametro = Ln_existente_id;
+
+        Pn_id_parametro := Ln_existente_id;
+    ELSE
+        -- Insertar nuevo
+        INSERT INTO comun.admi_parametro (
+            clave, valor, tipo, descripcion,
+            id_estado, usuario_creacion, fecha_modificacion
+        ) VALUES (
+            Pv_clave, Pv_valor, COALESCE(Pv_tipo, 'string'), Pv_descripcion,
+            Ln_id_estado_activo, Pn_usuario_creacion, NULL
+        ) RETURNING id_parametro INTO Pn_id_parametro;
+    END IF;
+
+    Pv_error := NULL;
+EXCEPTION WHEN OTHERS THEN
+    Pn_id_parametro := 0;
+    Pv_error := SQLERRM;
+END;
+$$;
+
+
+ALTER PROCEDURE comun.parametro_guardar(IN pv_clave character varying, IN pv_valor text, IN pv_tipo character varying, IN pv_descripcion text, IN pn_usuario_creacion integer, OUT pn_id_parametro integer, OUT pv_error text) OWNER TO admin;
+
+--
+-- Name: parametro_listar_todos(); Type: FUNCTION; Schema: comun; Owner: admin
+--
+
+CREATE FUNCTION comun.parametro_listar_todos() RETURNS TABLE(id_parametro integer, clave character varying, valor text, tipo character varying, descripcion text, id_estado integer)
+    LANGUAGE sql STABLE
+    AS $$
+    SELECT id_parametro, clave, valor, tipo, descripcion, id_estado
+    FROM comun.admi_parametro
+    WHERE id_estado = comun.obtener_id_estado_activo()
+    ORDER BY clave;
+$$;
+
+
+ALTER FUNCTION comun.parametro_listar_todos() OWNER TO admin;
+
+--
+-- Name: parametro_obtener(character varying); Type: FUNCTION; Schema: comun; Owner: admin
+--
+
+CREATE FUNCTION comun.parametro_obtener(pv_clave character varying) RETURNS TABLE(id_parametro integer, clave character varying, valor text, tipo character varying, descripcion text, id_estado integer)
+    LANGUAGE sql STABLE
+    AS $$
+    SELECT id_parametro, clave, valor, tipo, descripcion, id_estado
+    FROM comun.admi_parametro
+    WHERE clave = pv_clave
+      AND id_estado = comun.obtener_id_estado_activo()
+    LIMIT 1;
+$$;
+
+
+ALTER FUNCTION comun.parametro_obtener(pv_clave character varying) OWNER TO admin;
+
+--
+-- Name: parametros_listar(); Type: FUNCTION; Schema: comun; Owner: admin
+--
+
+CREATE FUNCTION comun.parametros_listar() RETURNS TABLE(id_parametro integer, clave character varying, valor text, tipo character varying, descripcion text, id_estado integer)
+    LANGUAGE sql STABLE
+    AS $$
+    SELECT id_parametro, clave, valor, tipo, descripcion, id_estado
+    FROM comun.admi_parametro
+    WHERE id_estado = comun.obtener_id_estado_activo()
+    ORDER BY clave;
+$$;
+
+
+ALTER FUNCTION comun.parametros_listar() OWNER TO admin;
+
+--
+-- Name: trg_proteger_estado_activo(); Type: FUNCTION; Schema: comun; Owner: admin
+--
+
+CREATE FUNCTION comun.trg_proteger_estado_activo() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    -- Si se intenta cambiar el id_estado de la fila con codigo = 'ACT'
+    IF OLD.codigo = 'ACT' AND (OLD.id_estado != NEW.id_estado) THEN
+        RAISE EXCEPTION 'No se puede modificar el id_estado del estado activo (ACT)';
+    END IF;
+    RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION comun.trg_proteger_estado_activo() OWNER TO admin;
+
+--
+-- Name: usuarios_obtener(character varying); Type: PROCEDURE; Schema: comun; Owner: admin
+--
+
+CREATE PROCEDURE comun.usuarios_obtener(IN pv_username character varying, OUT pn_id_usuario integer, OUT pv_password_hash character varying, OUT pn_id_rol integer, OUT pv_error text)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    SELECT u.id_usuario, u.password_hash, u.id_rol
+    INTO Pn_id_usuario, Pv_password_hash, Pn_id_rol
+    FROM comun.usuario u
+    WHERE u.username = Pv_username
+      AND u.id_estado = comun.obtener_id_estado_activo();
+
+    IF NOT FOUND THEN
+        Pn_id_usuario := 0;
+        Pv_password_hash := NULL;
+        Pn_id_rol := NULL;
+        Pv_error := 'Usuario no encontrado o inactivo';
+    ELSE
+        Pv_error := NULL;
+    END IF;
+EXCEPTION WHEN OTHERS THEN
+    Pn_id_usuario := 0;
+    Pv_password_hash := NULL;
+    Pn_id_rol := NULL;
+    Pv_error := SQLERRM;
+END;
+$$;
+
+
+ALTER PROCEDURE comun.usuarios_obtener(IN pv_username character varying, OUT pn_id_usuario integer, OUT pv_password_hash character varying, OUT pn_id_rol integer, OUT pv_error text) OWNER TO admin;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- Name: admi_parametro; Type: TABLE; Schema: comun; Owner: admin
+--
 
 CREATE TABLE comun.admi_parametro (
     id_parametro integer NOT NULL,
