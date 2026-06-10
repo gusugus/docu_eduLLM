@@ -1,389 +1,229 @@
-@startuml eduLLM_Database
-!theme plain
-title eduLLM - Modelo de Base de Datos (Esquema comun)
+@startuml
+!define table(x) class x << (T,#FFAAAA) >>
+!define fk(x) <color:blue>x</color>
+!define pk(x) <color:green>_x_</color>
 
-skinparam linetype ortho
-skinparam class {
-    BackgroundColor #FEF9E6
-    BorderColor #333333
-    ArrowColor #333333
+table(usuario) {
+    pk(id_usuario): int
+    username: varchar(100) UK
+    password_hash: varchar(255)
+    fk(id_rol): int
+    fk(id_estado): int
+    primer_nombre: varchar(100)
+    apellido_paterno: varchar(100)
+    apellido_materno: varchar(100)
+    correo: text
+    reset_token: varchar(255)
+    reset_token_expiry: timestamp
 }
 
-' ============================================
-' TABLAS PRINCIPALES DE USUARIOS
-' ============================================
-class usuario {
-    + id_usuario : INTEGER [PK]
-    --
-    cedula : VARCHAR(20) [NN]
-    username : VARCHAR(100) [NN, UK]
-    correo : TEXT
-    primer_nombre : VARCHAR(100) [NN]
-    segundo_nombre : VARCHAR(100)
-    apellido_paterno : VARCHAR(100) [NN]
-    apellido_materno : VARCHAR(100)
-    password_hash : VARCHAR(255) [NN]
-    reset_token : VARCHAR(255)
-    reset_token_expiry : TIMESTAMP
-    fecha_creacion : TIMESTAMP
-    usuario_creacion : INTEGER
-    fecha_modificacion : TIMESTAMP
-    usuario_modificacion : INTEGER
-    -- FK --
-    id_rol : INTEGER [FK]
-    id_estado : INTEGER [FK]
+table(rol) {
+    pk(id_rol): int
+    nombre: varchar(50) UK
+    fk(id_estado): int
 }
 
-class rol {
-    + id_rol : INTEGER [PK]
-    --
-    nombre : VARCHAR(50) [NN, UK]
-    fecha_creacion : TIMESTAMP
-    usuario_creacion : INTEGER
-    fecha_modificacion : TIMESTAMP
-    usuario_modificacion : INTEGER
-    -- FK --
-    id_estado : INTEGER [FK]
+table(estado) {
+    pk(id_estado): int
+    codigo: varchar(3) UK
+    nombre: varchar(50)
 }
 
-class estado {
-    + id_estado : INTEGER [PK]
-    --
-    codigo : VARCHAR(3) [NN, UK]
-    nombre : VARCHAR(50) [NN]
-    fecha_creacion : TIMESTAMP
-    usuario_creacion : INTEGER
-    fecha_modificacion : TIMESTAMP
-    usuario_modificacion : INTEGER
+table(administrador) {
+    pk(id_administrador): int
+    fk(id_usuario): int
+    nivel_acceso: int
+    fk(id_estado): int
 }
 
-' ============================================
-' ROLES ESPECÍFICOS (HERENCIA LÓGICA)
-' ============================================
-class administrador {
-    + id_administrador : INTEGER [PK]
-    --
-    nivel_acceso : INTEGER
-    fecha_creacion : TIMESTAMP
-    usuario_creacion : INTEGER
-    fecha_modificacion : TIMESTAMP
-    usuario_modificacion : INTEGER
-    -- FK --
-    id_usuario : INTEGER [FK, UK]
-    id_estado : INTEGER [FK]
+table(profesor) {
+    pk(id_profesor): int
+    fk(id_usuario): int
+    especialidad: varchar(100)
+    fk(id_estado): int
 }
 
-class profesor {
-    + id_profesor : INTEGER [PK]
-    --
-    fecha_creacion : TIMESTAMP
-    usuario_creacion : INTEGER
-    fecha_modificacion : TIMESTAMP
-    usuario_modificacion : INTEGER
-    -- FK --
-    id_usuario : INTEGER [FK, UK]
-    id_estado : INTEGER [FK]
+table(estudiante) {
+    pk(id_estudiante): int
+    fk(id_usuario): int
+    fk(id_grado): int
+    fk(id_estado): int
 }
 
-class estudiante {
-    + id_estudiante : INTEGER [PK]
-    --
-    fecha_creacion : TIMESTAMP
-    usuario_creacion : INTEGER
-    fecha_modificacion : TIMESTAMP
-    usuario_modificacion : INTEGER
-    -- FK --
-    id_usuario : INTEGER [FK, UK]
-    id_estado : INTEGER [FK]
-    id_grado : INTEGER [FK]
+table(grado) {
+    pk(id_grado): int
+    grado: int
+    paralelo: varchar(1)
+    fk(id_estado): int
 }
 
-' ============================================
-' ACADÉMICO
-' ============================================
-class grado {
-    + id_grado : INTEGER [PK]
-    --
-    grado : INTEGER
-    paralelo : VARCHAR(1)
-    fecha_creacion : TIMESTAMP
-    usuario_creacion : INTEGER
-    fecha_modificacion : TIMESTAMP
-    usuario_modificacion : INTEGER
-    id_estado : INTEGER [FK]
+table(materia) {
+    pk(id_materia): int
+    nombre: varchar(100)
+    descripcion: text
+    fk(id_grado): int
+    fk(id_estado): int
+    nombre_normalizado: text
 }
 
-class periodo_lectivo {
-    + id_periodo_lectivo : INTEGER [PK]
-    --
-    nombre : VARCHAR(100) [NN]
-    fecha_inicio : DATE [NN]
-    fecha_fin : DATE [NN]
-    es_activo : BOOLEAN
-    fecha_creacion : TIMESTAMP
-    usuario_creacion : INTEGER
-    fecha_modificacion : TIMESTAMP
-    usuario_modificacion : INTEGER
-    -- FK --
-    id_estado : INTEGER [FK]
+table(periodo_lectivo) {
+    pk(id_periodo_lectivo): int
+    nombre: varchar(100)
+    fecha_inicio: date
+    fecha_fin: date
+    es_activo: boolean
+    fk(id_estado): int
 }
 
-class materia {
-    + id_materia : INTEGER [PK]
-    --
-    nombre : VARCHAR(100) [NN]
-    nombre_normalizado : TEXT
-    descripcion : TEXT
-    fecha_creacion : TIMESTAMP
-    usuario_creacion : INTEGER
-    fecha_modificacion : TIMESTAMP
-    usuario_modificacion : INTEGER
-    -- FK --
-    id_estado : INTEGER [FK]
-    id_grado : INTEGER [FK]
+table(profesor_materia) {
+    pk(id_profesor_materia): int
+    fk(id_profesor): int
+    fk(id_materia): int
+    fk(id_periodo_lectivo): int
+    fk(id_estado): int
 }
 
-' ============================================
-' RELACIONES ACADÉMICAS
-' ============================================
-class profesor_materia {
-    + id_profesor_materia : INTEGER [PK]
-    --
-    fecha_asignacion : TIMESTAMP
-    fecha_creacion : TIMESTAMP
-    usuario_creacion : INTEGER
-    fecha_modificacion : TIMESTAMP
-    usuario_modificacion : INTEGER
-    -- FK --
-    id_profesor : INTEGER [FK]
-    id_materia : INTEGER [FK]
-    id_periodo_lectivo : INTEGER [FK]
-    id_estado : INTEGER [FK]
+table(estudiante_materia) {
+    pk(id_estudiante_materia): int
+    fk(id_estudiante): int
+    fk(id_materia): int
+    fk(id_periodo_lectivo): int
+    fk(id_estado): int
+    fecha_inscripcion: timestamp
+    fecha_retiro: timestamp
 }
 
-class estudiante_materia {
-    + id_estudiante_materia : INTEGER [PK]
-    --
-    fecha_inscripcion : TIMESTAMP
-    fecha_retiro : TIMESTAMP
-    fecha_creacion : TIMESTAMP
-    usuario_creacion : INTEGER
-    fecha_modificacion : TIMESTAMP
-    usuario_modificacion : INTEGER
-    -- FK --
-    id_estudiante : INTEGER [FK]
-    id_materia : INTEGER [FK]
-    id_periodo_lectivo : INTEGER [FK]
-    id_estado : INTEGER [FK]
+table(prueba) {
+    pk(id_prueba): int
+    titulo: varchar(255)
+    descripcion: text
+    fk(id_profesor): int
+    fk(id_materia): int
+    configuracion: jsonb
+    fk(id_estado): int
 }
 
-' ============================================
-' PRUEBAS Y GAMIFICACIÓN
-' ============================================
-class prueba {
-    + id_prueba : INTEGER [PK]
-    --
-    titulo : VARCHAR(255) [NN]
-    descripcion : TEXT
-    configuracion : JSONB
-    fecha_creacion : TIMESTAMP
-    usuario_creacion : INTEGER
-    fecha_modificacion : TIMESTAMP
-    usuario_modificacion : INTEGER
-    -- FK --
-    id_profesor : INTEGER [FK]
-    id_materia : INTEGER [FK]
-    id_estado : INTEGER [FK]
+table(partida) {
+    pk(id_partida): int
+    fk(id_prueba): int
+    fk(id_profesor): int
+    codigo_acceso: varchar(6) UK
+    estado_partida: varchar(20)
+    iniciado_en: timestamp
+    finalizado_en: timestamp
+    fk(id_estado): int
 }
 
-class partida {
-    + id_partida : INTEGER [PK]
-    --
-    codigo_acceso : VARCHAR(6) [NN, UK]
-    estado_partida : VARCHAR(20)
-    iniciado_en : TIMESTAMP
-    finalizado_en : TIMESTAMP
-    fecha_creacion : TIMESTAMP
-    usuario_creacion : INTEGER
-    fecha_modificacion : TIMESTAMP
-    usuario_modificacion : INTEGER
-    -- FK --
-    id_prueba : INTEGER [FK]
-    id_profesor : INTEGER [FK]
-    id_estado : INTEGER [FK]
+table(partida_estudiante) {
+    pk(id_partida_estudiante): int
+    fk(id_partida): int
+    fk(id_estudiante): int
+    nickname_opcional: varchar(100)
+    puntaje_total: int
+    respuestas_correctas: int
+    fk(id_estado): int
 }
 
-class partida_estudiante {
-    + id_partida_estudiante : INTEGER [PK]
-    --
-    nickname_opcional : VARCHAR(100)
-    puntaje_total : INTEGER
-    respuestas_correctas : INTEGER
-    fecha_creacion : TIMESTAMP
-    usuario_creacion : INTEGER
-    fecha_modificacion : TIMESTAMP
-    usuario_modificacion : INTEGER
-    -- FK --
-    id_partida : INTEGER [FK]
-    id_estudiante : INTEGER [FK]
-    id_estado : INTEGER [FK]
+table(pregunta) {
+    pk(id_pregunta): int
+    fk(id_prueba): int
+    texto: text
+    tipo: varchar(20)
+    cooldown: int
+    tiempo_limite: int
+    fk(id_estado): int
+    image_url: text
+    audio_url: text
+    video_url: text
 }
 
-class pregunta {
-    + id_pregunta : INTEGER [PK]
-    --
-    texto : TEXT [NN]
-    tipo : VARCHAR(20)
-    cooldown : INTEGER
-    tiempo_limite : INTEGER
-    image_url : TEXT
-    audio_url : TEXT
-    video_url : TEXT
-    fecha_creacion : TIMESTAMP
-    usuario_creacion : INTEGER
-    fecha_modificacion : TIMESTAMP
-    usuario_modificacion : INTEGER
-    -- FK --
-    id_prueba : INTEGER [FK]
-    id_estado : INTEGER [FK]
+table(opcion) {
+    pk(id_opcion): int
+    fk(id_pregunta): int
+    texto: text
+    orden: int
+    es_correcta: boolean
+    fk(id_estado): int
 }
 
-class opcion {
-    + id_opcion : INTEGER [PK]
-    --
-    texto : TEXT [NN]
-    orden : INTEGER [NN]
-    es_correcta : BOOLEAN
-    fecha_creacion : TIMESTAMP
-    usuario_creacion : INTEGER
-    -- FK --
-    id_pregunta : INTEGER [FK]
-    id_estado : INTEGER [FK]
+table(respuesta) {
+    pk(id_respuesta): int
+    fk(id_partida_estudiante): int
+    fk(id_pregunta): int
+    fk(id_opcion_seleccionada): int
+    tiempo_ms: int
+    puntaje_obtenido: int
 }
 
-class respuesta {
-    + id_respuesta : INTEGER [PK]
-    --
-    respuesta_dada : INTEGER
-    tiempo_ms : INTEGER
-    puntaje_obtenido : INTEGER
-    fecha_creacion : TIMESTAMP
-    usuario_creacion : INTEGER
-    fecha_modificacion : TIMESTAMP
-    usuario_modificacion : INTEGER
-    -- FK --
-    id_partida_estudiante : INTEGER [FK]
-    id_pregunta : INTEGER [FK]
-    id_opcion_seleccionada : INTEGER [FK]
+table(retroalimentacion_llm) {
+    pk(id_retroalimentacion): int
+    fk(id_partida_estudiante): int
+    preguntas_falladas: jsonb
+    prompt_enviado: text
+    respuesta_llm: text
+    modelo_usado: varchar(100)
 }
 
-class retroalimentacion_llm {
-    + id_retroalimentacion : INTEGER [PK]
-    --
-    preguntas_falladas : JSONB
-    prompt_enviado : TEXT
-    respuesta_llm : TEXT
-    modelo_usado : VARCHAR(100)
-    fecha_creacion : TIMESTAMP
-    usuario_creacion : INTEGER
-    fecha_modificacion : TIMESTAMP
-    usuario_modificacion : INTEGER
-    -- FK --
-    id_partida_estudiante : INTEGER [FK]
+table(admi_parametro) {
+    pk(id_parametro): int
+    clave: varchar(100) UK
+    valor: text
+    tipo: varchar(20)
+    descripcion: text
+    fk(id_estado): int
 }
 
-' ============================================
-' PARÁMETROS Y DOCUMENTOS
-' ============================================
-class admi_parametro {
-    + id_parametro : INTEGER [PK]
-    --
-    clave : VARCHAR(100) [NN, UK]
-    valor : TEXT [NN]
-    tipo : VARCHAR(20)
-    descripcion : TEXT
-    fecha_creacion : TIMESTAMP
-    usuario_creacion : INTEGER
-    fecha_modificacion : TIMESTAMP
-    usuario_modificacion : INTEGER
-    -- FK --
-    id_estado : INTEGER [FK]
+table(documento) {
+    pk(id_documento): int
+    ruta: text
+    fk(id_usuario): int
+    fk(id_estado): int
 }
 
-class documento {
-    + id_documento : INTEGER [PK]
-    --
-    ruta : TEXT [NN]
-    -- FK --
-    id_usuario : INTEGER [FK]
-    id_estado : INTEGER [FK]
-}
+usuario ||--o{ administrador : ""
+usuario ||--o{ profesor : ""
+usuario ||--o{ estudiante : ""
+usuario ||--o{ documento : ""
+usuario }o--|| rol : ""
+usuario }o--|| estado : ""
 
-class sessions {
-    + sid : VARCHAR [PK]
-    --
-    sess : JSON [NN]
-    expire : TIMESTAMP [NN]
-}
+estado ||--o{ admi_parametro : ""
+estado ||--o{ materia : ""
+estado ||--o{ prueba : ""
+estado ||--o{ partida : ""
+estado ||--o{ partida_estudiante : ""
+estado ||--o{ pregunta : ""
+estado ||--o{ opcion : ""
+estado ||--o{ periodo_lectivo : ""
+estado ||--o{ profesor_materia : ""
+estado ||--o{ estudiante_materia : ""
+estado ||--o{ administrador : ""
+estado ||--o{ profesor : ""
+estado ||--o{ estudiante : ""
 
-' ============================================
-' RELACIONES
-' ============================================
-usuario ||--|| rol : "tiene"
-usuario ||--|| estado : "tiene"
-rol ||--|| estado : "tiene"
+profesor ||--o{ prueba : ""
+profesor ||--o{ partida : ""
+profesor ||--o{ profesor_materia : ""
 
-usuario ||--|| administrador : "puede ser"
-usuario ||--|| profesor : "puede ser"
-usuario ||--|| estudiante : "puede ser"
+materia ||--o{ profesor_materia : ""
+materia ||--o{ estudiante_materia : ""
+materia ||--o{ prueba : ""
+materia }o--|| grado : ""
 
-administrador ||--|| estado : "tiene"
-profesor ||--|| estado : "tiene"
-estudiante ||--|| estado : "tiene"
+grado ||--o{ estudiante : ""
+grado ||--o{ materia : ""
 
-estudiante }o--|| grado : "pertenece"
+periodo_lectivo ||--o{ profesor_materia : ""
+periodo_lectivo ||--o{ estudiante_materia : ""
 
-profesor_materia }o--|| profesor : "asigna"
-profesor_materia }o--|| materia : "asigna"
-profesor_materia }o--|| periodo_lectivo : "en"
-profesor_materia ||--|| estado : "tiene"
+prueba ||--o{ partida : ""
+prueba ||--o{ pregunta : ""
 
-estudiante_materia }o--|| estudiante : "inscribe"
-estudiante_materia }o--|| materia : "inscribe"
-estudiante_materia }o--|| periodo_lectivo : "en"
-estudiante_materia ||--|| estado : "tiene"
+pregunta ||--o{ opcion : ""
+pregunta ||--o{ respuesta : ""
 
-materia }o--|| grado : "pertenece"
-materia ||--|| estado : "tiene"
-periodo_lectivo ||--|| estado : "tiene"
-grado ||--|| estado : "tiene"
-
-prueba }o--|| profesor : "crea"
-prueba }o--|| materia : "de"
-prueba ||--|| estado : "tiene"
-
-partida }o--|| prueba : "ejecuta"
-partida }o--|| profesor : "gestiona"
-partida ||--|| estado : "tiene"
-
-partida_estudiante }o--|| partida : "participa"
-partida_estudiante }o--|| estudiante : "participa"
-partida_estudiante ||--|| estado : "tiene"
-
-pregunta }o--|| prueba : "contiene"
-pregunta ||--|| estado : "tiene"
-
-opcion }o--|| pregunta : "responde"
-opcion ||--|| estado : "tiene"
-
-respuesta }o--|| partida_estudiante : "registra"
-respuesta }o--|| pregunta : "responde"
-respuesta }o--|| opcion : "selecciona"
-
-retroalimentacion_llm }o--|| partida_estudiante : "genera"
-
-admi_parametro ||--|| estado : "tiene"
-documento }o--|| usuario : "pertenece"
-documento ||--|| estado : "tiene"
+partida ||--o{ partida_estudiante : ""
+partida_estudiante ||--o{ respuesta : ""
+partida_estudiante ||--|| retroalimentacion_llm : ""
 
 @enduml
